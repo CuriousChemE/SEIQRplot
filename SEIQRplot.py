@@ -46,6 +46,10 @@ params = alpha, beta, gamma, lambdaI, lambdaQu, phi, rho
 tt,S,E,I,Q,R = seiqr_model_with_soc_dist(init_vals, params, t)
 source = ColumnDataSource(data=dict(t=tt,S=S,E=E,I=I,Q=Q,R=R))
 
+# set up Div with R0, max I, and day of max I
+drtext=f"max I = {'{0:.0%}'.format(max(I))} on day {int(tt[I.index(max(I))])}"
+divright = Div(text=drtext, sizing_mode="scale_width", style={'font-size': '200%', 'color': 'red'})      
+
 plot = figure(x_range=(0, 150),y_range=(0,1), plot_width=700, plot_height=400,title='SEIQR',tools="")
 # need to add colors and legend, get rid of tools
 plot.line('t', 'S', source=source, line_width=3, line_alpha=0.6, color="Green",legend="Susceptible")
@@ -85,6 +89,7 @@ def update_data(attrname, old, new):
     params = alpha, beta, gamma, lambdaI, lambdaQu, phi, rho
     tt,S,E,I,Q,R = seiqr_model_with_soc_dist(init_vals, params, t)
     source.data=dict(t=tt,S=S,E=E,I=I,Q=Q,R=R)
+    divright.text=f"max I = {'{0:.0%}'.format(max(I))} on day {int(tt[I.index(max(I))])}"
                                                   
 
 # for w in [AlphaSlider, BetaSlider, GammaSlider, LambdaISlider, LambdaQSlider,PhiSlider, RhoSlider]:
@@ -92,7 +97,7 @@ for w in [AlphaSlider, BetaSlider, GammaSlider, LambdaISlider, LambdaQSlider,Phi
     w.on_change('value', update_data)
 
 # inputs = column(AlphaSlider, BetaSlider, GammaSlider, LambdaISlider, LambdaQSlider,PhiSlider, RhoSlider)
-inputs = column(AlphaSlider, BetaSlider, GammaSlider, LambdaISlider, LambdaQSlider,PhiSlider)
+inputs = column(AlphaSlider, BetaSlider, GammaSlider, LambdaISlider, LambdaQSlider,PhiSlider,divright)
 
 # read in html strings for header and footer
 with open ("SEIQReq.txt", "r") as myfile:
